@@ -16,7 +16,6 @@ class ApiService {
       if (response.statusCode != 200) {
         return false;
       }
-
       final data = jsonDecode(response.body);
 
       return data['success'] == true;
