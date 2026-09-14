@@ -1,0 +1,28 @@
+name: bank_app
+description: "A Flutter bank Application"
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.12.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  flutter_riverpod: ^3.4.2
+  go_router: ^16.3.0
+  http: ^1.5.0
+  shared_preferences: ^2.5.5
+  liquid_glass_widgets: ^0.24.4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
