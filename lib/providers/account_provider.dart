@@ -10,7 +10,6 @@ final accountApiServiceProvider = Provider<AccountApiService?>((ref) {
   if (serverState.ipAddress.isEmpty) {
     return null;
   }
-
   return AccountApiService(
     serverAddress: serverState.ipAddress,
   );
