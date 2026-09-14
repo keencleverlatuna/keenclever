@@ -8,7 +8,6 @@ import 'main_shell.dart';
 
 class ServerConnectionScreen extends ConsumerStatefulWidget {
   const ServerConnectionScreen({super.key});
-
   @override
   ConsumerState<ServerConnectionScreen> createState() =>
       _ServerConnectionScreenState();
