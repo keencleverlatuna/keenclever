@@ -7,7 +7,6 @@ class Account {
   final String phone;
   final double balance;
   final String? createdAt;
-
   const Account({
     required this.id,
     required this.accountNumber,
