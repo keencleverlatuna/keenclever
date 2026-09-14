@@ -23,7 +23,6 @@ set(FLUTTER_LIBRARY ${FLUTTER_LIBRARY} PARENT_SCOPE)
 set(FLUTTER_ICU_DATA_FILE "${EPHEMERAL_DIR}/icudtl.dat" PARENT_SCOPE)
 set(PROJECT_BUILD_DIR "${PROJECT_DIR}/build/" PARENT_SCOPE)
 set(AOT_LIBRARY "${PROJECT_DIR}/build/windows/app.so" PARENT_SCOPE)
-
 list(APPEND FLUTTER_LIBRARY_HEADERS
   "flutter_export.h"
   "flutter_windows.h"
@@ -44,6 +43,7 @@ list(APPEND CPP_WRAPPER_SOURCES_CORE
   "core_implementations.cc"
   "standard_codec.cc"
 )
+
 list(TRANSFORM CPP_WRAPPER_SOURCES_CORE PREPEND "${WRAPPER_ROOT}/")
 list(APPEND CPP_WRAPPER_SOURCES_PLUGIN
   "plugin_registrar.cc"
