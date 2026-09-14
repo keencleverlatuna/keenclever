@@ -346,7 +346,7 @@ class _ManagementCard extends StatelessWidget {
             ),
           ),
           IconButton(
-            tooltip: 'Edit',
+            tooltip: 'Update',
             onPressed: onEdit,
             color: colorScheme.onSurface,
             icon: const Icon(
