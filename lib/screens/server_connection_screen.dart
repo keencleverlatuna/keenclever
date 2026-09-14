@@ -18,7 +18,6 @@ class _ServerConnectionScreenState
   late final TextEditingController ipController;
 
   bool isConnecting = false;
-
   @override
   void initState() {
     super.initState();
