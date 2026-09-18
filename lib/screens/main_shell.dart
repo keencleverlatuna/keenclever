@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:liquid_glass_widgets/liquid_glass_widgets.dart';
 
 import '../widgets/glass_bottom_navigation.dart';
 import 'home_screen.dart';
 import 'settings_screen.dart';
+import 'transactions_screen.dart';
 
 class MainShell extends StatefulWidget {
   const MainShell({super.key});
@@ -24,6 +24,7 @@ class _MainShellState extends State<MainShell> {
 
     screens = [
       const HomeScreen(),
+      const TransactionsScreen(),
       const SettingsScreen(),
     ];
   }
@@ -33,43 +34,41 @@ class _MainShellState extends State<MainShell> {
     final isDark =
         Theme.of(context).brightness == Brightness.dark;
 
-    final backgroundColor = isDark
-        ? const Color(0xFF0B0F17)
-        : const Color(0xFFEAF4FF);
-
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
-        systemNavigationBarColor:
-        Colors.transparent,
-        systemNavigationBarDividerColor:
-        Colors.transparent,
+        statusBarColor: Colors.transparent,
+        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarDividerColor: Colors.transparent,
         systemNavigationBarIconBrightness:
-        isDark
-            ? Brightness.light
-            : Brightness.dark,
-        systemNavigationBarContrastEnforced:
-        false,
+        isDark ? Brightness.light : Brightness.dark,
+        systemNavigationBarContrastEnforced: false,
+        systemStatusBarContrastEnforced: false,
       ),
-      child: GlassScaffold(
+      child: Scaffold(
         extendBody: true,
-        contentAwareBrightness: true,
-        backgroundColor: backgroundColor,
-        bottomBar: GlassBottomNavigation(
-          selectedIndex: selectedIndex,
-          onTabSelected: (index) {
-            setState(() {
-              selectedIndex = index;
-            });
-          },
-        ),
-        body: Container(
-          width: double.infinity,
-          height: double.infinity,
-          color: backgroundColor,
-          child: IndexedStack(
-            index: selectedIndex,
-            children: screens,
-          ),
+        backgroundColor: Colors.transparent,
+        body: Stack(
+          children: [
+            Positioned.fill(
+              child: IndexedStack(
+                index: selectedIndex,
+                children: screens,
+              ),
+            ),
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: GlassBottomNavigation(
+                selectedIndex: selectedIndex,
+                onTabSelected: (index) {
+                  setState(() {
+                    selectedIndex = index;
+                  });
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );

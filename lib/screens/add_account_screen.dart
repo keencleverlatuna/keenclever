@@ -1,6 +1,7 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:liquid_glass_widgets/liquid_glass_widgets.dart';
 
 import '../providers/account_provider.dart';
 
@@ -44,8 +45,7 @@ class _AddAccountScreenState
       return;
     }
 
-    final balanceText =
-    balanceController.text.trim();
+    final balanceText = balanceController.text.trim();
 
     final balance = balanceText.isEmpty
         ? 0.0
@@ -84,24 +84,11 @@ class _AddAccountScreenState
       await showDialog(
         context: context,
         builder: (context) {
-          return AlertDialog(
-            title: const Text(
-              'Account Created',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            content: const Text(
-              'The bank account has been created successfully.',
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Text('OK'),
-              ),
-            ],
+          return _GlassDialog(
+            title: 'Account Created',
+            message:
+            'The bank account has been created successfully.',
+            buttonText: 'OK',
           );
         },
       );
@@ -131,22 +118,10 @@ class _AddAccountScreenState
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: const Text(
-            'Add Account Error',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          content: Text(message),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text('OK'),
-            ),
-          ],
+        return _GlassDialog(
+          title: 'Add Account Error',
+          message: message,
+          buttonText: 'OK',
         );
       },
     );
@@ -157,237 +132,329 @@ class _AddAccountScreenState
     final isDark =
         Theme.of(context).brightness == Brightness.dark;
 
-    final colorScheme =
-        Theme.of(context).colorScheme;
-
-    final backgroundColors = isDark
-        ? const [
-      Color(0xFF0B1220),
-      Color(0xFF172033),
-      Color(0xFF0B1220),
-    ]
-        : const [
-      Color(0xFFEAF4FF),
-      Color(0xFFF7F9FC),
-      Color(0xFFE8EEF7),
-    ];
-
-    final primaryText = isDark
-        ? Colors.white
-        : const Color(0xFF172554);
-
-    final secondaryText = isDark
-        ? Colors.white70
-        : const Color(0xFF64748B);
-
     return Scaffold(
       backgroundColor: Colors.transparent,
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: backgroundColors,
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          _GlassBackground(
+            isDark: isDark,
+          ),
+
+          SafeArea(
+            bottom: false,
+            child: Column(
+              children: [
+                _GlassHeader(
+                  onBack: () {
+                    Navigator.pop(context);
+                  },
+                ),
+
+                Expanded(
+                  child: SingleChildScrollView(
+                    physics:
+                    const BouncingScrollPhysics(),
+                    padding: const EdgeInsets.fromLTRB(
+                      16,
+                      10,
+                      16,
+                      130,
+                    ),
+                    child: _GlassFormCard(
+                      child: Column(
+                        children: [
+                          _GlassMainIcon(
+                            icon:
+                            Icons.person_add_alt_1_rounded,
+                          ),
+
+                          const SizedBox(height: 18),
+
+                          const Text(
+                            'Create Bank Account',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 25,
+                              fontWeight: FontWeight.w800,
+                              color: Colors.white,
+                              letterSpacing: -0.6,
+                            ),
+                          ),
+
+                          const SizedBox(height: 8),
+
+                          Text(
+                            'Enter the details below to create a new account.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 13,
+                              height: 1.4,
+                              color: Colors.white
+                                  .withValues(alpha: 0.70),
+                            ),
+                          ),
+
+                          const SizedBox(height: 28),
+
+                          _GlassTextField(
+                            controller:
+                            accountNumberController,
+                            label: 'Account Number',
+                            icon:
+                            Icons.credit_card_rounded,
+                            keyboardType:
+                            TextInputType.number,
+                          ),
+
+                          const SizedBox(height: 16),
+
+                          _GlassTextField(
+                            controller:
+                            firstNameController,
+                            label: 'First Name',
+                            icon:
+                            Icons.person_outline_rounded,
+                            keyboardType:
+                            TextInputType.name,
+                          ),
+
+                          const SizedBox(height: 16),
+
+                          _GlassTextField(
+                            controller:
+                            lastNameController,
+                            label: 'Last Name',
+                            icon:
+                            Icons.person_outline_rounded,
+                            keyboardType:
+                            TextInputType.name,
+                          ),
+
+                          const SizedBox(height: 16),
+
+                          _GlassTextField(
+                            controller: emailController,
+                            label: 'Email',
+                            icon:
+                            Icons.email_outlined,
+                            keyboardType:
+                            TextInputType.emailAddress,
+                          ),
+
+                          const SizedBox(height: 16),
+
+                          _GlassTextField(
+                            controller: phoneController,
+                            label: 'Phone',
+                            icon:
+                            Icons.phone_outlined,
+                            keyboardType:
+                            TextInputType.phone,
+                          ),
+
+                          const SizedBox(height: 16),
+
+                          _GlassTextField(
+                            controller: balanceController,
+                            label: 'Initial Balance',
+                            icon: Icons
+                                .account_balance_wallet_outlined,
+                            keyboardType:
+                            const TextInputType
+                                .numberWithOptions(
+                              decimal: true,
+                            ),
+                          ),
+
+                          const SizedBox(height: 26),
+
+                          _GlassCreateButton(
+                            isSaving: isSaving,
+                            onTap: _addAccount,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _GlassBackground extends StatelessWidget {
+  final bool isDark;
+
+  const _GlassBackground({
+    required this.isDark,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: isDark
+                  ? const [
+                Color(0xFF080B25),
+                Color(0xFF171330),
+                Color(0xFF081B38),
+              ]
+                  : const [
+                Color(0xFF246BFE),
+                Color(0xFF6A4CFF),
+                Color(0xFF19A7FF),
+              ],
+            ),
           ),
         ),
-        child: SafeArea(
-          child: Column(
+
+        const _GlowOrb(
+          size: 260,
+          top: -70,
+          left: -70,
+          color: Color(0xFF5E5CE6),
+        ),
+
+        const _GlowOrb(
+          size: 280,
+          top: 180,
+          right: -110,
+          color: Color(0xFFBF5AF2),
+        ),
+
+        const _GlowOrb(
+          size: 220,
+          bottom: 100,
+          left: -80,
+          color: Color(0xFF0A84FF),
+        ),
+
+        const _GlowOrb(
+          size: 190,
+          bottom: -60,
+          right: 20,
+          color: Color(0xFF30B0C7),
+        ),
+      ],
+    );
+  }
+}
+
+class _GlowOrb extends StatelessWidget {
+  final double size;
+  final double? top;
+  final double? bottom;
+  final double? left;
+  final double? right;
+  final Color color;
+
+  const _GlowOrb({
+    required this.size,
+    this.top,
+    this.bottom,
+    this.left,
+    this.right,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      top: top,
+      bottom: bottom,
+      left: left,
+      right: right,
+      child: ImageFiltered(
+        imageFilter: ImageFilter.blur(
+          sigmaX: 50,
+          sigmaY: 50,
+        ),
+        child: Container(
+          width: size,
+          height: size,
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.62),
+            shape: BoxShape.circle,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _GlassHeader extends StatelessWidget {
+  final VoidCallback onBack;
+
+  const _GlassHeader({
+    required this.onBack,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: const BorderRadius.vertical(
+        bottom: Radius.circular(30),
+      ),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(
+          sigmaX: 30,
+          sigmaY: 30,
+        ),
+        child: Container(
+          height: 70,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.12),
+            border: Border(
+              bottom: BorderSide(
+                color: Colors.white.withValues(alpha: 0.25),
+              ),
+            ),
+          ),
+          child: Stack(
+            alignment: Alignment.center,
             children: [
-              _buildHeader(
-                primaryText,
+              const Text(
+                'Add Account',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 22,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: -0.4,
+                ),
               ),
 
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.fromLTRB(
-                    20,
-                    10,
-                    20,
-                    30,
-                  ),
-                  child: GlassCard(
-                    padding: const EdgeInsets.all(22),
-                    child: Column(
-                      children: [
-                        Container(
-                          width: 72,
-                          height: 72,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color:
-                            colorScheme.primaryContainer,
-                            boxShadow: [
-                              BoxShadow(
-                                color: colorScheme.primary
-                                    .withValues(
-                                  alpha: 0.18,
-                                ),
-                                blurRadius: 24,
-                                spreadRadius: 4,
-                              ),
-                            ],
-                          ),
-                          child: Icon(
-                            Icons.person_add_alt_1,
-                            size: 34,
-                            color: colorScheme
-                                .onPrimaryContainer,
-                          ),
-                        ),
-
-                        const SizedBox(height: 18),
-
-                        Text(
-                          'Create Bank Account',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: primaryText,
-                          ),
-                        ),
-
-                        const SizedBox(height: 8),
-
-                        Text(
-                          'Enter the details below to create a new account.',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: secondaryText,
-                          ),
-                        ),
-
-                        const SizedBox(height: 28),
-
-                        _buildTextField(
-                          controller:
-                          accountNumberController,
-                          label: 'Account Number',
-                          icon: Icons.credit_card,
-                          keyboardType:
-                          TextInputType.number,
-                          primaryText: primaryText,
-                          secondaryText: secondaryText,
-                        ),
-
-                        const SizedBox(height: 18),
-
-                        _buildTextField(
-                          controller:
-                          firstNameController,
-                          label: 'First Name',
-                          icon: Icons.person_outline,
-                          keyboardType:
-                          TextInputType.name,
-                          primaryText: primaryText,
-                          secondaryText: secondaryText,
-                        ),
-
-                        const SizedBox(height: 18),
-
-                        _buildTextField(
-                          controller:
-                          lastNameController,
-                          label: 'Last Name',
-                          icon: Icons.person_outline,
-                          keyboardType:
-                          TextInputType.name,
-                          primaryText: primaryText,
-                          secondaryText: secondaryText,
-                        ),
-
-                        const SizedBox(height: 18),
-
-                        _buildTextField(
-                          controller: emailController,
-                          label: 'Email',
-                          icon: Icons.email_outlined,
-                          keyboardType:
-                          TextInputType.emailAddress,
-                          primaryText: primaryText,
-                          secondaryText: secondaryText,
-                        ),
-
-                        const SizedBox(height: 18),
-
-                        _buildTextField(
-                          controller: phoneController,
-                          label: 'Phone',
-                          icon: Icons.phone_outlined,
-                          keyboardType:
-                          TextInputType.phone,
-                          primaryText: primaryText,
-                          secondaryText: secondaryText,
-                        ),
-
-                        const SizedBox(height: 18),
-
-                        _buildTextField(
-                          controller: balanceController,
-                          label: 'Initial Balance',
-                          icon: Icons
-                              .account_balance_wallet_outlined,
-                          keyboardType:
-                          const TextInputType
-                              .numberWithOptions(
-                            decimal: true,
-                          ),
-                          primaryText: primaryText,
-                          secondaryText: secondaryText,
-                        ),
-
-                        const SizedBox(height: 28),
-
-                        SizedBox(
-                          width: double.infinity,
-                          height: 58,
-                          child: FilledButton.icon(
-                            onPressed:
-                            isSaving
-                                ? null
-                                : _addAccount,
-                            icon: isSaving
-                                ? const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child:
-                              CircularProgressIndicator(
-                                strokeWidth: 2.5,
-                                color: Colors.white,
-                              ),
-                            )
-                                : const Icon(
-                              Icons.person_add_alt_1,
-                            ),
-                            label: Text(
-                              isSaving
-                                  ? 'Creating...'
-                                  : 'Create Account',
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            style:
-                            FilledButton.styleFrom(
-                              backgroundColor:
-                              colorScheme.primary,
-                              foregroundColor:
-                              colorScheme.onPrimary,
-                              shape:
-                              RoundedRectangleBorder(
-                                borderRadius:
-                                BorderRadius.circular(
-                                  30,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+              Positioned(
+                left: 12,
+                child: GestureDetector(
+                  onTap: onBack,
+                  child: Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color:
+                      Colors.white.withValues(alpha: 0.12),
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color:
+                        Colors.white.withValues(alpha: 0.22),
+                      ),
+                    ),
+                    child: const Icon(
+                      Icons.arrow_back_ios_new_rounded,
+                      color: Colors.white,
+                      size: 19,
                     ),
                   ),
                 ),
@@ -398,108 +465,329 @@ class _AddAccountScreenState
       ),
     );
   }
+}
 
-  Widget _buildHeader(Color textColor) {
-    return SizedBox(
-      height: 64,
-      child: Row(
-        children: [
-          IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: Icon(
-              Icons.arrow_back_ios_new,
-              color: textColor,
+class _GlassFormCard extends StatelessWidget {
+  final Widget child;
+
+  const _GlassFormCard({
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(30),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(
+          sigmaX: 24,
+          sigmaY: 24,
+        ),
+        child: Container(
+          padding: const EdgeInsets.all(22),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.13),
+            borderRadius: BorderRadius.circular(30),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.25),
             ),
-          ),
-          Expanded(
-            child: Text(
-              'Add Account',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: textColor,
+            boxShadow: [
+              BoxShadow(
+                color:
+                Colors.black.withValues(alpha: 0.14),
+                blurRadius: 30,
+                offset: const Offset(0, 15),
               ),
-            ),
+            ],
           ),
-          const SizedBox(width: 48),
-        ],
+          child: Stack(
+            children: [
+              Positioned(
+                top: 0,
+                left: 20,
+                right: 20,
+                child: Container(
+                  height: 1,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.transparent,
+                        Colors.white
+                            .withValues(alpha: 0.60),
+                        Colors.transparent,
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
+              child,
+            ],
+          ),
+        ),
       ),
     );
   }
+}
 
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String label,
-    required IconData icon,
-    required TextInputType keyboardType,
-    required Color primaryText,
-    required Color secondaryText,
-  }) {
-    final isDark =
-        Theme.of(context).brightness == Brightness.dark;
+class _GlassMainIcon extends StatelessWidget {
+  final IconData icon;
 
-    final colorScheme =
-        Theme.of(context).colorScheme;
+  const _GlassMainIcon({
+    required this.icon,
+  });
 
-    return TextField(
-      controller: controller,
-      keyboardType: keyboardType,
-      style: TextStyle(
-        color: primaryText,
-        fontSize: 16,
-        fontWeight: FontWeight.w500,
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 76,
+      height: 76,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: Colors.white.withValues(alpha: 0.16),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.30),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color:
+            Colors.white.withValues(alpha: 0.08),
+            blurRadius: 20,
+            spreadRadius: 2,
+          ),
+        ],
       ),
-      cursorColor: colorScheme.primary,
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: TextStyle(
-          color: secondaryText,
+      child: Icon(
+        icon,
+        size: 34,
+        color: Colors.white,
+      ),
+    );
+  }
+}
+
+class _GlassTextField extends StatelessWidget {
+  final TextEditingController controller;
+  final String label;
+  final IconData icon;
+  final TextInputType keyboardType;
+
+  const _GlassTextField({
+    required this.controller,
+    required this.label,
+    required this.icon,
+    required this.keyboardType,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(20),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(
+          sigmaX: 18,
+          sigmaY: 18,
         ),
-        floatingLabelStyle: TextStyle(
-          color: colorScheme.primary,
-          fontWeight: FontWeight.w600,
-        ),
-        prefixIcon: Icon(
-          icon,
-          color: isDark
-              ? Colors.white70
-              : colorScheme.primary,
-        ),
-        filled: true,
-        fillColor: isDark
-            ? Colors.white.withValues(
-          alpha: 0.06,
-        )
-            : Colors.white.withValues(
-          alpha: 0.45,
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius:
-          BorderRadius.circular(12),
-          borderSide: BorderSide(
-            color: isDark
-                ? Colors.white24
-                : const Color(0xFF94A3B8),
-            width: 1,
+        child: TextField(
+          controller: controller,
+          keyboardType: keyboardType,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+          ),
+          cursorColor: Colors.white,
+          decoration: InputDecoration(
+            labelText: label,
+            labelStyle: TextStyle(
+              color:
+              Colors.white.withValues(alpha: 0.68),
+            ),
+            floatingLabelStyle: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+            ),
+            prefixIcon: Padding(
+              padding: const EdgeInsets.only(
+                left: 14,
+                right: 8,
+              ),
+              child: Icon(
+                icon,
+                color:
+                Colors.white.withValues(alpha: 0.78),
+                size: 21,
+              ),
+            ),
+            prefixIconConstraints:
+            const BoxConstraints(
+              minWidth: 50,
+            ),
+            filled: true,
+            fillColor:
+            Colors.white.withValues(alpha: 0.10),
+            contentPadding:
+            const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 18,
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius:
+              BorderRadius.circular(20),
+              borderSide: BorderSide(
+                color:
+                Colors.white.withValues(alpha: 0.20),
+                width: 1,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius:
+              BorderRadius.circular(20),
+              borderSide: BorderSide(
+                color:
+                Colors.white.withValues(alpha: 0.65),
+                width: 1.5,
+              ),
+            ),
           ),
         ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius:
-          BorderRadius.circular(12),
-          borderSide: BorderSide(
-            color: colorScheme.primary,
-            width: 2,
+      ),
+    );
+  }
+}
+
+class _GlassCreateButton extends StatelessWidget {
+  final bool isSaving;
+  final VoidCallback onTap;
+
+  const _GlassCreateButton({
+    required this.isSaving,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: isSaving ? null : onTap,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(22),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(
+            sigmaX: 20,
+            sigmaY: 20,
+          ),
+          child: Container(
+            width: double.infinity,
+            height: 58,
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.18),
+              borderRadius: BorderRadius.circular(22),
+              border: Border.all(
+                color:
+                Colors.white.withValues(alpha: 0.32),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color:
+                  Colors.black.withValues(alpha: 0.12),
+                  blurRadius: 18,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            child: Center(
+              child: isSaving
+                  ? const SizedBox(
+                width: 22,
+                height: 22,
+                child:
+                CircularProgressIndicator(
+                  strokeWidth: 2.5,
+                  color: Colors.white,
+                ),
+              )
+                  : const Row(
+                mainAxisAlignment:
+                MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.person_add_alt_1_rounded,
+                    color: Colors.white,
+                    size: 21,
+                  ),
+                  SizedBox(width: 10),
+                  Text(
+                    'Create Account',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
-        contentPadding:
-        const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 18,
+      ),
+    );
+  }
+}
+
+class _GlassDialog extends StatelessWidget {
+  final String title;
+  final String message;
+  final String buttonText;
+
+  const _GlassDialog({
+    required this.title,
+    required this.message,
+    required this.buttonText,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      backgroundColor:
+      Colors.black.withValues(alpha: 0.78),
+      surfaceTintColor: Colors.transparent,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(28),
+        side: BorderSide(
+          color:
+          Colors.white.withValues(alpha: 0.22),
         ),
       ),
+      title: Text(
+        title,
+        style: const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.w800,
+        ),
+      ),
+      content: Text(
+        message,
+        style: TextStyle(
+          color:
+          Colors.white.withValues(alpha: 0.72),
+          height: 1.4,
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Text(
+            buttonText,
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

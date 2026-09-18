@@ -65,6 +65,15 @@ class GlassBottomNavigation extends StatelessWidget {
         ),
         GlassTab(
           icon: Icon(
+            CupertinoIcons.doc_text,
+          ),
+          activeIcon: Icon(
+            CupertinoIcons.doc_text_fill,
+          ),
+          label: 'Transactions',
+        ),
+        GlassTab(
+          icon: Icon(
             CupertinoIcons.gear,
           ),
           activeIcon: Icon(
