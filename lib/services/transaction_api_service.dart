@@ -10,7 +10,7 @@ class TransactionApiService {
   TransactionApiService(this.serverAddress);
 
   String get baseUrl =>
-      'http://$serverAddress/bank_api/transactions.php';
+      '$serverAddress/bank_api/transactions.php';
 
   Future<List<Transaction>> getTransactions() async {
     final response = await http

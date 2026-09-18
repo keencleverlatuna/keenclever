@@ -12,7 +12,7 @@ class AccountApiService {
   });
 
   String get baseUrl =>
-      'http://$serverAddress/bank_api/accounts.php';
+      '$serverAddress/bank_api/accounts.php';
 
   Future<List<Account>> getAccounts() async {
     final response = await http

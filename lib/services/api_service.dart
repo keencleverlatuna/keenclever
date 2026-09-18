@@ -5,8 +5,13 @@ import 'package:http/http.dart' as http;
 class ApiService {
   Future<bool> testConnection(String serverAddress) async {
     try {
+      final baseUrl = serverAddress.trim().replaceFirst(
+        RegExp(r'/$'),
+        '',
+      );
+
       final url = Uri.parse(
-        'http://$serverAddress/bank_api/test.php',
+        '$baseUrl/bank_api/db_test.php',
       );
 
       final response = await http

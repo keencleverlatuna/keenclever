@@ -25,7 +25,10 @@ class _ServerConnectionScreenState
   @override
   void initState() {
     super.initState();
-    ipController = TextEditingController();
+
+    ipController = TextEditingController(
+      text: 'https://bisque-jellyfish-119892.hostingersite.com',
+    );
   }
 
   @override
@@ -35,10 +38,13 @@ class _ServerConnectionScreenState
   }
 
   Future<void> _connectToServer() async {
-    final ipAddress = ipController.text.trim();
+    final serverAddress = ipController.text.trim().replaceFirst(
+      RegExp(r'/$'),
+      '',
+    );
 
-    if (ipAddress.isEmpty) {
-      _showError('Please enter the server IP address.');
+    if (serverAddress.isEmpty) {
+      _showError('Please enter the server address.');
       return;
     }
 
@@ -48,13 +54,14 @@ class _ServerConnectionScreenState
       isConnecting = true;
     });
 
-    ref.read(serverProvider.notifier).setIpAddress(ipAddress);
+    ref.read(serverProvider.notifier).setIpAddress(serverAddress);
     ref.read(serverProvider.notifier).setConnecting();
 
     try {
       final apiService = ApiService();
 
-      final connected = await apiService.testConnection(ipAddress);
+      final connected =
+      await apiService.testConnection(serverAddress);
 
       if (!mounted) return;
 
@@ -74,7 +81,7 @@ class _ServerConnectionScreenState
 
         _showError(
           'Unable to connect to the bank server.\n\n'
-              'Please check the IP address and make sure '
+              'Please check the server address and make sure '
               'the server is running.',
         );
       }
@@ -88,7 +95,7 @@ class _ServerConnectionScreenState
       _showError(
         'Unable to connect to the bank server.\n\n'
             'Please make sure your server is running and '
-            'your device is connected to the same network.',
+            'your device is connected to the internet.',
       );
     } finally {
       if (mounted) {
@@ -680,7 +687,7 @@ class _GlassInput extends StatelessWidget {
           ),
           child: TextField(
             controller: controller,
-            keyboardType: TextInputType.number,
+            keyboardType: TextInputType.url,
             textInputAction: TextInputAction.done,
             onSubmitted: onSubmitted,
             style: TextStyle(
@@ -698,7 +705,8 @@ class _GlassInput extends StatelessWidget {
                 color: primary,
                 size: 25,
               ),
-              hintText: 'Example: 192.168.1.100',
+              hintText:
+              'https://your-server-address.com',
               hintStyle: TextStyle(
                 color: dark
                     ? Colors.white.withValues(alpha: 0.55)
@@ -806,7 +814,8 @@ class _GlassActionButton extends StatelessWidget {
             ],
           ),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment:
+            MainAxisAlignment.center,
             children: [
               Icon(
                 icon,
